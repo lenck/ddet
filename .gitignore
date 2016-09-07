@@ -1,0 +1,5 @@
+publish_nets.sh
+nets/*
+*~
+matconvnet
+vlfeat
