@@ -22,13 +22,13 @@ if exist(done_file, 'file'), return; end;
 [~,~] = mkdir(tgt_dir);
 url = utls.readfile(url_file);
 for ui = 1:numel(url)
-  p_untar(url{ui}, tgt_dir);
+  p_unpack(url{ui}, tgt_dir);
 end
 downloaded = true;
 f = fopen(done_file, 'w'); fclose(f);
 end
 
-function p_untar(url, tgt_dir)
+function p_unpack(url, tgt_dir)
 [~, wget_p] = system('which wget');
 if exist(strtrim(wget_p), 'file');
   [~, fname, ext] = fileparts(url);
@@ -44,18 +44,24 @@ if exist(strtrim(wget_p), 'file');
   if exist(tar_file, 'file')
     fprintf(isdeployed+1, 'Unpacking %s -> %s. This may take a while...\n', ...
       tar_file, tgt_dir);
-    untar(tar_file, tgt_dir);
+    m_unpack(tar_file, tgt_dir);
   else
-    m_untar(url, tgt_dir);
+    m_unpack(url, tgt_dir);
   end
 else
-  m_untar(url, tgt_dir);
+  m_unpack(url, tgt_dir);
 end
 end
 
-function m_untar(url, tgt_dir)
+function m_unpack(url, tgt_dir)
 fprintf(isdeployed+1, ...
   'Downloading %s -> %s using MATLAB, this may take a while...\n',...
   url, tgt_dir);
-untar(url, tgt_dir);
+[~, ~, ext] = fileparts(url);
+switch ext
+  case '.gz'
+    untar(url, tgt_dir);
+  case '.zip'
+    unzip(url, tgt_dir);
+end
 end
